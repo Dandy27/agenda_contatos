@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:agenda_contatos_app/helpers/contact_helpers.dart';
 import 'package:flutter/material.dart';
 
 class ContactPage extends StatefulWidget {
+
 
   final Contact contact;
   ContactPage({this.contact});
@@ -11,6 +14,12 @@ class ContactPage extends StatefulWidget {
 }
 
 class _ContactPageState extends State<ContactPage> {
+
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
+
+  bool _userEdited = false;
 
   Contact _editedContact;
 
@@ -22,7 +31,13 @@ class _ContactPageState extends State<ContactPage> {
       _editedContact = Contact();
     } else {
       _editedContact = Contact.fromMap(widget.contact.toMap());
+
+      _nameController.text = _editedContact.name;
+      _emailController.text = _editedContact.email;
+      _phoneController.text = _editedContact.phone;
+
     }
+
   }
 
   @override
@@ -37,6 +52,54 @@ class _ContactPageState extends State<ContactPage> {
         onPressed: (){},
         child: Icon(Icons.save),
         backgroundColor: Colors.red,
+      ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(10.0),
+        child: Column(
+          children: [
+            GestureDetector(
+              child:Container(
+                width: 140.0,
+                height: 140.0,
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                        image: _editedContact.img != null
+                            ? FileImage(File(_editedContact.img))
+                            : AssetImage('images/person.png'))),
+              ) ,
+            ),
+            TextField(
+              controller: _nameController,
+              decoration: InputDecoration(labelText: 'Nome'),
+              onChanged: (text){
+                _userEdited = true;
+                setState(() {
+                  _editedContact.name =text;
+                });
+              },
+            ),
+            TextField(
+              controller: _emailController,
+              decoration: InputDecoration(labelText: 'Email'),
+              onChanged: (text){
+                _userEdited = true;
+                _editedContact.email =text;
+              },
+              keyboardType: TextInputType.emailAddress,
+
+            ),
+            TextField(
+              controller: _phoneController,
+              decoration: InputDecoration(labelText: 'Phone'),
+              onChanged: (text){
+                _userEdited = true;
+                _editedContact.phone =text;
+              },
+              keyboardType: TextInputType.phone,
+            )
+          ],
+        ),
       ),
     );
   }
