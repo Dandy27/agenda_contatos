@@ -74,7 +74,7 @@ class ContactHelper {
     where: '$idColumn = ?', whereArgs: [contact.id]);
   }
   
-  Future<List> getAllContact() async{
+  Future<List> getAllContacts() async{
     Database dbContact = await db;
     List listMap = await dbContact.rawQuery('SELECT * FROM $contactTable');
     List<Contact> listContact = List();
