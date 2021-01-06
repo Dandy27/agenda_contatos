@@ -18,8 +18,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    _getAllContacts() {}
-    ;
+    _getAllContacts();
   }
 
   @override
@@ -99,7 +98,8 @@ class _HomePageState extends State<HomePage> {
     final recContact = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => ContactPage(
+            builder: (context) =>
+                ContactPage(
                   contact: contact,
                 )));
     if (recContact != null) {
@@ -107,14 +107,16 @@ class _HomePageState extends State<HomePage> {
         await helper.updateContact(recContact);
       } else {
         await helper.saveContact(recContact);
-      }
-      _getAllContacts() {
-        helper.getAllContacts().then((list) {
-          setState(() {
-            contacts = list;
-          });
-        });
+        _getAllContacts();
       }
     }
+  }
+
+  void _getAllContacts() {
+    helper.getAllContacts().then((list) {
+      setState(() {
+        contacts = list;
+      });
+    });
   }
 }

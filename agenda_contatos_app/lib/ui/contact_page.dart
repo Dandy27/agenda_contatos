@@ -4,9 +4,8 @@ import 'package:agenda_contatos_app/helpers/contact_helpers.dart';
 import 'package:flutter/material.dart';
 
 class ContactPage extends StatefulWidget {
-
-
   final Contact contact;
+
   ContactPage({this.contact});
 
   @override
@@ -14,10 +13,11 @@ class ContactPage extends StatefulWidget {
 }
 
 class _ContactPageState extends State<ContactPage> {
-
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
+
+  final _nameFocus = FocusNode();
 
   bool _userEdited = false;
 
@@ -26,8 +26,8 @@ class _ContactPageState extends State<ContactPage> {
   @override
   void initState() {
     super.initState();
-    
-    if(widget.contact == null){
+
+    if (widget.contact == null) {
       _editedContact = Contact();
     } else {
       _editedContact = Contact.fromMap(widget.contact.toMap());
@@ -35,10 +35,10 @@ class _ContactPageState extends State<ContactPage> {
       _nameController.text = _editedContact.name;
       _emailController.text = _editedContact.email;
       _phoneController.text = _editedContact.phone;
-
     }
-
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +49,13 @@ class _ContactPageState extends State<ContactPage> {
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: (){},
+        onPressed: () {
+          if(_editedContact.name != null && _editedContact.name.isNotEmpty){
+            Navigator.pop(context, _editedContact);
+          } else {
+            FocusScope.of(context).requestFocus(_nameFocus);
+          }
+        },
         child: Icon(Icons.save),
         backgroundColor: Colors.red,
       ),
@@ -58,7 +64,7 @@ class _ContactPageState extends State<ContactPage> {
         child: Column(
           children: [
             GestureDetector(
-              child:Container(
+              child: Container(
                 width: 140.0,
                 height: 140.0,
                 decoration: BoxDecoration(
@@ -67,34 +73,34 @@ class _ContactPageState extends State<ContactPage> {
                         image: _editedContact.img != null
                             ? FileImage(File(_editedContact.img))
                             : AssetImage('images/person.png'))),
-              ) ,
+              ),
             ),
             TextField(
               controller: _nameController,
+              focusNode: _nameFocus,
               decoration: InputDecoration(labelText: 'Nome'),
-              onChanged: (text){
+              onChanged: (text) {
                 _userEdited = true;
                 setState(() {
-                  _editedContact.name =text;
+                  _editedContact.name = text;
                 });
               },
             ),
             TextField(
               controller: _emailController,
               decoration: InputDecoration(labelText: 'Email'),
-              onChanged: (text){
+              onChanged: (text) {
                 _userEdited = true;
-                _editedContact.email =text;
+                _editedContact.email = text;
               },
               keyboardType: TextInputType.emailAddress,
-
             ),
             TextField(
               controller: _phoneController,
               decoration: InputDecoration(labelText: 'Phone'),
-              onChanged: (text){
+              onChanged: (text) {
                 _userEdited = true;
-                _editedContact.phone =text;
+                _editedContact.phone = text;
               },
               keyboardType: TextInputType.phone,
             )
@@ -103,6 +109,4 @@ class _ContactPageState extends State<ContactPage> {
       ),
     );
   }
-
-
 }
