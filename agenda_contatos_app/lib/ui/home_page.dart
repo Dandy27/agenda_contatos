@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:url_launcher/url_launcher.dart';
 import 'package:agenda_contatos_app/helpers/contact_helpers.dart';
 import 'package:agenda_contatos_app/ui/contact_page.dart';
 import 'package:flutter/material.dart';
@@ -89,17 +89,76 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       onTap: () {
-        _showContactPage(contact: contacts[index]);
+        _showOptions(context, index);
       },
     );
+  }
+
+
+  void _showOptions(BuildContext context, int index) {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return BottomSheet(
+            builder: (context) {
+              return Container(
+                padding: EdgeInsets.all(10.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: FlatButton(
+                          onPressed: () {
+                            launch('tel:${contacts[index].phone}');
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            'Ligar',
+                            style: TextStyle(color: Colors.red, fontSize: 20.0),
+                          )),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: FlatButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            _showContactPage(contact: contacts[index]);
+                          },
+                          child: Text(
+                            'Editar',
+                            style: TextStyle(color: Colors.red, fontSize: 20.0),
+                          )),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: FlatButton(
+                          onPressed: () {
+                            helper.deleteContact(contacts[index].id);
+                            setState(() {
+                              contacts.removeAt(index);
+                              Navigator.pop(context);
+                            });
+                          },
+                          child: Text(
+                            'Excluir',
+                            style: TextStyle(color: Colors.red, fontSize: 20.0),
+                          )),
+                    )
+                  ],
+                ),
+              );
+            },
+            onClosing: () {},
+          );
+        });
   }
 
   void _showContactPage({Contact contact}) async {
     final recContact = await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                ContactPage(
+            builder: (context) => ContactPage(
                   contact: contact,
                 )));
     if (recContact != null) {
